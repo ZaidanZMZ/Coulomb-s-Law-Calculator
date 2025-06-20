@@ -1,5 +1,6 @@
 # Kalkulator Hukum Coulomb
 
+
 Kalkulator Hukum Coulomb adalah aplikasi web interaktif yang memungkinkan pengguna menghitung gaya elektrostatis antara dua muatan listrik berdasarkan Hukum Coulomb. Aplikasi ini dirancang khusus untuk membantu siswa dan pendidik dalam memahami konsep elektrostatika dengan menyediakan visualisasi interaktif dan solusi langkah demi langkah.
 
 ## ✨ Fitur Utama
@@ -53,8 +54,8 @@ Kalkulator Hukum Coulomb adalah aplikasi web interaktif yang memungkinkan penggu
 
 1. Clone repository:
    ```bash
-   git clone https://github.com/username/coulomb-law-calculator.git
-   cd coulomb-law-calculator
+   git clone https://github.com/ZaidanZMZ/Coulomb-s-Law-Calculator.git
+   cd Coulomb-s-Law-Calculator
    ```
 
 2. Buat lingkungan virtual (opsional tapi disarankan):
@@ -81,7 +82,7 @@ Kalkulator Hukum Coulomb adalah aplikasi web interaktif yang memungkinkan penggu
 
 ## 📂 Struktur Proyek
 ```
-coulomb-law-calculator/
+Coulomb-s-Law-Calculator/
 ├── app.py                  # Backend Flask
 ├── templates/
 │   └── index.html          # Halaman utama aplikasi
