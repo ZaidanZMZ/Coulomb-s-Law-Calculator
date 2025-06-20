@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Hukum Coulomb</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* CSS Lengkap */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        
+        .formula-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px solid rgba(88, 147, 255, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+        }
+        
+        .calculator-card {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.9), rgba(15, 23, 42, 0.95));
+            border: 1px solid rgba(88, 147, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-field {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(88, 147, 255, 0.2);
+            transition: all 0.2s ease;
+            color: #f8f9fa;
+        }
+        
+        .input-field:focus {
+            border-color: #5893ff;
+            box-shadow: 0 0 0 3px rgba(88, 147, 255, 0.3);
+            outline: none;
+        }
+        
+        .mode-btn {
+            transition: all 0.2s ease;
+            border: 1px solid rgba(88, 147, 255, 0.2);
+            transform-origin: center;
+        }
+        
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(88, 147, 255, 0.15);
+        }
+        
+        .mode-btn:active {
+            transform: translateY(0);
+        }
+        
+        .calculation-step {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(88, 147, 255, 0.2);
+            transition: all 0.2s ease;
+        }
+        
+        .calculation-step:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .highlight {
+            animation: highlight 1s ease;
+        }
+        
+        @keyframes highlight {
+            0% { background-color: rgba(255, 217, 102, 0.3); }
+            100% { background-color: transparent; }
+        }
+        
+        .sci-notation {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+        }
+        
+        .problem-card {
+            transition: all 0.2s ease;
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(88, 147, 255, 0.2);
+        }
+        
+        .problem-card:hover {
+            transform: translateY(-2px);
+            border-color: #5893ff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-calculate {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.2s ease;
+            transform-origin: center;
+        }
+        
+        .btn-calculate:hover {
+            box-shadow: 0 0 15px rgba(88, 147, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .btn-calculate:active {
+            transform: translateY(0);
+        }
+        
+        .problem-btn {
+            transition: all 0.2s ease;
+            transform-origin: center;
+        }
+        
+        .problem-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .problem-btn:active {
+            transform: translateY(0);
+        }
+        
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, #5893ff 0%, transparent 70%);
+            opacity: 0.1;
+            z-index: -1;
+        }
+        
+        .section-title {
+            position: relative;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, #5893ff, #2e65f3);
+            border-radius: 10px;
+        }
+        
+        .charge-visual {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            transition: transform 0.2s ease;
+        }
+        
+        .charge-positive {
+            background: linear-gradient(135deg, #5893ff, #2e65f3);
+        }
+        
+        .charge-negative {
+            background: linear-gradient(135deg, #ff5893, #f32e65);
+        }
+        
+        .force-indicator {
+            height: 8px;
+            border-radius: 4px;
+            margin: 0 5px;
+            position: relative;
+            flex-grow: 1;
+            transition: all 0.3s ease;
+        }
+        
+        .force-indicator::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+        }
+        
+        .force-indicator::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            width: 0;
+            height: 0;
+            border-left: 8px solid transparent;
+            border-right: 8px solid transparent;
+        }
+        
+        .force-attractive .force-indicator {
+            background: linear-gradient(90deg, #5893ff, #2e65f3);
+        }
+        
+        .force-attractive .force-indicator::before {
+            border-bottom: 10px solid #5893ff;
+            left: 0;
+        }
+        
+        .force-attractive .force-indicator::after {
+            border-top: 10px solid #2e65f3;
+            right: 0;
+        }
+        
+        .force-repulsive .force-indicator {
+            background: linear-gradient(90deg, #ff6b6b, #ff4757);
+        }
+        
+        .force-repulsive .force-indicator::before {
+            border-bottom: 10px solid #ff6b6b;
+            right: 0;
+        }
+        
+        .force-repulsive .force-indicator::after {
+            border-top: 10px solid #ff4757;
+            left: 0;
+        }
+        
+        .value-unit {
+            transition: all 0.2s ease;
+            border-radius: 0 0.375rem 0.375rem 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 60px;
+            background: rgba(30, 41, 59, 0.7);
+        }
+        
+        .input-group input {
+            border-radius: 0.375rem 0 0 0.375rem !important;
+        }
+        
+        .input-group select {
+            border-radius: 0 !important;
+        }
+        
+        /* For WebKit browsers */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #5893ff;
+            border-radius: 10px;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #2e65f3;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .input-group .flex {
+                flex-direction: column;
+            }
+            
+            .input-group input, 
+            .input-group select, 
+            .value-unit {
+                border-radius: 0.375rem !important;
+                width: 100%;
+            }
+            
+            .input-group select {
+                border-top-left-radius: 0 !important;
+                border-top-right-radius: 0 !important;
+            }
+            
+            .input-group input {
+                border-bottom-left-radius: 0 !important;
+                border-bottom-right-radius: 0 !important;
+            }
+            
+            .mode-btn {
+                padding: 12px 8px;
+                font-size: 0.9rem;
+            }
+            
+            .mode-btn i {
+                margin-right: 4px;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .calculator-card {
+                padding: 1.5rem;
+            }
+            
+            .problem-card {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Animation for charge visuals */
+        .charge-pulse {
+            animation: chargePulse 0.4s ease;
+        }
+        
+        @keyframes chargePulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Result animation */
+        .result-appear {
+            animation: resultAppear 0.3s ease-out;
+        }
+        
+        @keyframes resultAppear {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        electric: {
+                            50: '#eef5ff',
+                            100: '#d9e8ff',
+                            200: '#bcd5ff',
+                            300: '#8ebbff',
+                            400: '#5893ff',
+                            500: '#2e65f3',
+                            600: '#1f48e0',
+                            700: '#1938b5',
+                            800: '#1a328f',
+                            900: '#1b2e72',
+                        },
+                        repulsive: {
+                            400: '#ff6b6b',
+                            500: '#ff4757',
+                            600: '#ff2e43'
+                        },
+                        dark: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            700: '#334155',
+                        },
+                        light: {
+                            100: '#f8f9fa',
+                            200: '#e9ecef',
+                            300: '#dee2e6',
+                            900: '#212529'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="text-gray-200">
+    <!-- Animated Background Particles -->
+    <div id="particles-container" class="fixed inset-0 overflow-hidden z-0"></div>
+    
+    <!-- Header -->
+    <header class="relative z-10">
+        <div class="container mx-auto px-4 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="text-center md:text-left mb-6 md:mb-0">
+                    <h1 class="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-electric-400 to-electric-200">
+                        <i class="fas fa-bolt mr-3 text-electric-400"></i>
+                        Kalkulator Hukum Coulomb
+                    </h1>
+                    <p class="mt-3 text-lg text-electric-200 max-w-2xl">Hitung gaya elektrostatis dengan presisi - untuk siswa dan pendidik fisika</p>
+                </div>
+                <div class="formula-card p-4 md:p-5 w-full md:w-auto mt-4 md:mt-0">
+                    <p class="text-sm font-semibold text-electric-300 mb-2">RUMUS ELEKTROSTATIS:</p>
+                    <p class="text-xl md:text-2xl font-mono text-white text-center">F = k · |q₁q₂| / r²</p>
+                    <div class="grid grid-cols-2 gap-2 mt-3 text-xs md:text-sm">
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-electric-500 mr-2"></div>
+                            <span>F: Gaya (N)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-electric-500 mr-2"></div>
+                            <span>k: Konstanta</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-electric-500 mr-2"></div>
+                            <span>q₁,q₂: Muatan (C)</span>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="w-3 h-3 rounded-full bg-electric-500 mr-2"></div>
+                            <span>r: Jarak (m)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="relative z-10 container mx-auto px-4 pb-16">
+        <!-- Calculator Section -->
+        <section id="calculator" class="mb-16">
+            <div class="mb-8 text-center">
+                <h2 class="section-title inline-block text-2xl md:text-3xl font-bold text-electric-100">Kalkulator Gaya Elektrostatis</h2>
+                <p class="mt-3 text-electric-300 max-w-2xl mx-auto">Masukkan nilai yang diketahui untuk menghitung gaya elektrostatis, muatan, atau jarak antara dua partikel bermuatan</p>
+            </div>
+            
+            <!-- Calculator Card -->
+            <div class="calculator-card p-6 md:p-8 rounded-2xl mb-8">
+                <!-- Mode Selector -->
+                <div class="mb-8">
+                    <label class="block text-electric-200 font-medium mb-4 text-xl">Hitung:</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <button id="mode-force" class="mode-btn bg-gradient-to-r from-electric-800 to-electric-900 text-white font-medium py-3 px-3 md:py-4 md:px-4 rounded-xl text-base md:text-lg flex items-center justify-center">
+                            <i class="fas fa-dumbbell mr-2"></i> Gaya (F)
+                        </button>
+                        <button id="mode-charge1" class="mode-btn bg-dark-800 text-gray-300 font-medium py-3 px-3 md:py-4 md:px-4 rounded-xl text-base md:text-lg flex items-center justify-center">
+                            <i class="fas fa-plus-circle mr-2"></i> Muatan 1
+                        </button>
+                        <button id="mode-charge2" class="mode-btn bg-dark-800 text-gray-300 font-medium py-3 px-3 md:py-4 md:px-4 rounded-xl text-base md:text-lg flex items-center justify-center">
+                            <i class="fas fa-minus-circle mr-2"></i> Muatan 2
+                        </button>
+                        <button id="mode-distance" class="mode-btn bg-dark-800 text-gray-300 font-medium py-3 px-3 md:py-4 md:px-4 rounded-xl text-base md:text-lg flex items-center justify-center">
+                            <i class="fas fa-ruler mr-2"></i> Jarak
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Input Fields Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <!-- Charge 1 Input -->
+                    <div id="charge1-group" class="input-group">
+                        <label class="block text-electric-200 font-medium mb-3 text-lg">Muatan 1 (q₁)</label>
+                        <div class="flex">
+                            <input id="charge1-value" type="number" step="any" placeholder="contoh: 5" 
+                                   class="input-field flex-grow p-4 focus:outline-none text-lg">
+                            <select id="charge1-unit" class="input-field p-4 text-lg bg-dark-800">
+                                <option value="C">Coulomb (C)</option>
+                                <option value="μC" selected>μC (×10⁻⁶)</option>
+                                <option value="nC">nC (×10⁻⁹)</option>
+                                <option value="pC">pC (×10⁻¹²)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Charge 2 Input -->
+                    <div id="charge2-group" class="input-group">
+                        <label class="block text-electric-200 font-medium mb-3 text-lg">Muatan 2 (q₂)</label>
+                        <div class="flex">
+                            <input id="charge2-value" type="number" step="any" placeholder="contoh: 3" 
+                                   class="input-field flex-grow p-4 focus:outline-none text-lg">
+                            <select id="charge2-unit" class="input-field p-4 text-lg bg-dark-800">
+                                <option value="C">Coulomb (C)</option>
+                                <option value="μC" selected>μC (×10⁻⁶)</option>
+                                <option value="nC">nC (×10⁻⁹)</option>
+                                <option value="pC">pC (×10⁻¹²)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Distance Input -->
+                    <div id="distance-group" class="input-group">
+                        <label class="block text-electric-200 font-medium mb-3 text-lg">Jarak (r)</label>
+                        <div class="flex">
+                            <input id="distance-value" type="number" step="any" placeholder="contoh: 0.1" 
+                                   class="input-field flex-grow p-4 focus:outline-none text-lg">
+                            <div class="value-unit text-lg">m</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Force Input -->
+                    <div id="force-input" class="input-group hidden">
+                        <label class="block text-electric-200 font-medium mb-3 text-lg">Gaya (F)</label>
+                        <div class="flex">
+                            <input id="force-value" type="number" step="any" placeholder="contoh: 13.5" 
+                                   class="input-field flex-grow p-4 focus:outline-none text-lg">
+                            <div class="value-unit text-lg">N</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Constant Selection -->
+                <div class="grid grid-cols-1 gap-6 mb-8">
+                    <div>
+                        <label class="block text-electric-200 font-medium mb-3 text-lg">Konstanta Coulomb (k)</label>
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <select id="constant-select" class="input-field p-4 text-lg rounded-lg bg-dark-800 flex-grow">
+                                <option value="8987551787">Vakum/Udara (8.98755×10⁹)</option>
+                                <option value="9000000000">Pendekatan (9×10⁹)</option>
+                                <option value="11200000000">Air (1.12×10¹⁰)</option>
+                                <option value="custom">Nilai Kustom</option>
+                            </select>
+                            <div id="custom-k-container" class="hidden w-full sm:w-auto">
+                                <div class="flex">
+                                    <input id="custom-k-value" type="number" step="any" placeholder="contoh: 9e9" 
+                                           class="input-field flex-grow p-4 text-lg focus:outline-none w-full">
+                                    <div class="value-unit text-lg">N·m²/C²</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Visualization Box -->
+                <div class="bg-dark-800 rounded-xl p-6 mb-8 border border-electric-800">
+                    <h3 class="text-electric-200 font-medium text-lg mb-6">Visualisasi Gaya</h3>
+                    
+                    <div class="flex justify-center items-center my-8">
+                        <div class="charge-visual charge-positive text-xl" id="charge1-visual">+</div>
+                        <div class="flex flex-col items-center flex-grow max-w-xs">
+                            <div class="flex items-center w-full">
+                                <span id="force-value-visual" class="text-sm text-gray-400">Gaya: </span>
+                            </div>
+                            <div id="force-container" class="flex items-center w-full my-2 force-attractive">
+                                <div id="force-indicator" class="force-indicator"></div>
+                            </div>
+                            <div class="flex items-center w-full">
+                                <span id="distance-value-visual" class="text-sm text-gray-400">Jarak: 0.1 m</span>
+                            </div>
+                        </div>
+                        <div class="charge-visual charge-negative text-xl" id="charge2-visual">-</div>
+                    </div>
+                    
+                    <p id="visual-description" class="text-center text-gray-400">Gaya bergantung pada polaritas muatan: muatan berlawanan menarik, muatan sejenis tolak-menolak</p>
+                </div>
+                
+                <!-- Calculate Button -->
+                <div class="mt-6">
+                    <button id="calculate-btn" class="btn-calculate w-full py-4 px-6 bg-gradient-to-r from-electric-600 to-electric-700 text-white font-bold rounded-xl transition flex items-center justify-center text-xl">
+                        <i class="fas fa-bolt mr-3"></i>
+                        Hitung Gaya Elektrostatis
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Calculation Process -->
+            <div id="calculation-container" class="calculator-card p-6 md:p-8 rounded-2xl mt-8 hidden">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-electric-100">Solusi Langkah demi Langkah</h3>
+                    <p class="text-electric-300">Proses perhitungan rinci untuk nilai input Anda</p>
+                </div>
+                <div id="calculation-steps" class="space-y-4 max-h-[500px] overflow-y-auto pr-4 custom-scrollbar">
+                    <!-- Steps will be added dynamically -->
+                </div>
+            </div>
+        </section>
+        
+        <!-- Explanation Section -->
+        <section id="explanation" class="mb-16">
+            <div class="mb-8 text-center">
+                <h2 class="section-title inline-block text-2xl md:text-3xl font-bold text-electric-100">Memahami Hukum Coulomb</h2>
+                <p class="mt-3 text-electric-300 max-w-3xl mx-auto">Hukum dasar yang menggambarkan gaya elektrostatis antara partikel bermuatan</p>
+            </div>
+            
+            <div class="calculator-card p-6 md:p-8 rounded-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <div class="mb-6">
+                            <h3 class="text-xl font-bold text-electric-200 mb-3">Prinsip Dasar</h3>
+                            <p class="mb-4">Hukum Coulomb, dirumuskan oleh fisikawan Prancis Charles-Augustin de Coulomb pada tahun 1785, menggambarkan interaksi elektrostatis antara partikel bermuatan listrik.</p>
+                            
+                            <div class="bg-dark-800 p-5 rounded-lg mb-6">
+                                <h4 class="font-bold text-electric-300 mb-3">Fitur Kunci:</h4>
+                                <ul class="list-disc pl-5 space-y-2">
+                                    <li>Gaya berbanding lurus dengan hasil perkalian besaran muatan</li>
+                                    <li>Gaya berbanding terbalik dengan kuadrat jarak antara keduanya</li>
+                                    <li>Gaya bekerja sepanjang garis yang menghubungkan kedua muatan</li>
+                                    <li>Gaya bersifat konservatif dan mengikuti hukum ketiga Newton</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="p-5 rounded-lg bg-gradient-to-br from-electric-900 to-electric-800 border border-electric-700">
+                                <h4 class="text-xl font-bold text-electric-100 mb-3">Formulasi Vektor</h4>
+                                <p>Vektor gaya elektrostatis:</p>
+                                <div class="formula-card p-4 my-4 text-center">
+                                    <p class="text-2xl font-mono">F₁₂ = k · (q₁q₂ / r²) · r̂₁₂</p>
+                                </div>
+                                <p>Dimana r̂₁₂ adalah vektor satuan dalam arah dari muatan 1 ke muatan 2.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-bold text-electric-200 mb-4">Konstanta dalam Berbagai Medium</h3>
+                        <p class="mb-6">Konstanta k tergantung pada medium di antara muatan:</p>
+                        
+                        <div class="overflow-x-auto rounded-lg mb-6">
+                            <table class="w-full text-sm text-left text-gray-400">
+                                <thead class="text-xs uppercase bg-dark-800 text-electric-300">
+                                    <tr>
+                                        <th class="px-4 py-3">Medium</th>
+                                        <th class="px-4 py-3">Konstanta (k)</th>
+                                        <th class="px-4 py-3">Permitivitas Relatif (εᵣ)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-dark-700">
+                                        <td class="px-4 py-3">Vakum</td>
+                                        <td class="px-4 py-3 sci-notation">8.98755 × 10⁹</td>
+                                        <td class="px-4 py-3">1 (tepat)</td>
+                                    </tr>
+                                    <tr class="border-b border-dark-700">
+                                        <td class="px-4 py-3">Udara</td>
+                                        <td class="px-4 py-3 sci-notation">≈8.99 × 10⁹</td>
+                                        <td class="px-4 py-3">1.00058986</td>
+                                    </tr>
+                                    <tr class="border-b border-dark-700">
+                                        <td class="px-4 py-3">Air</td>
+                                        <td class="px-4 py-3 sci-notation">≈1.12 × 10¹⁰</td>
+                                        <td class="px-4 py-3">80.1</td>
+                                    </tr>
+                                    <tr class="border-b border-dark-700">
+                                        <td class="px-4 py-3">Kaca</td>
+                                        <td class="px-4 py-3 sci-notation">≈1.8 × 10¹⁰</td>
+                                        <td class="px-4 py-3">5-10</td>
+                                    </tr>
+                                    <tr class="border-b border-dark-700">
+                                        <td class="px-4 py-3">Minyak</td>
+                                        <td class="px-4 py-3 sci-notation">≈4.2 × 10¹⁰</td>
+                                        <td class="px-4 py-3">~2.3</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="mt-6 p-5 rounded-lg bg-gradient-to-br from-electric-900 to-electric-800 border border-electric-700">
+                            <h4 class="font-bold text-electric-200 mb-3 text-xl">Hubungan Permitivitas</h4>
+                            <p>Konstanta terkait dengan permitivitas:</p>
+                            <div class="formula-card p-4 my-4 text-center">
+                                <p class="text-2xl font-mono">k = 1/(4πε₀εᵣ)</p>
+                            </div>
+                            <ul class="list-disc pl-5 mt-4 space-y-1">
+                                <li>ε₀: Permitivitas vakum (8.854×10⁻¹² C²/N·m²)</li>
+                                <li>εᵣ: Permitivitas relatif medium</li>
+                                <li>Semakin tinggi εᵣ, semakin kecil gaya elektrostatis</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Sample Problems -->
+        <section id="problems">
+            <div class="mb-8 text-center">
+                <h2 class="section-title inline-block text-2xl md:text-3xl font-bold text-electric-100">Soal Latihan</h2>
+                <p class="mt-3 text-electric-300 max-w-3xl mx-auto">Coba contoh-contoh berikut untuk menguji pemahaman Anda tentang Hukum Coulomb</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="problem-card p-6 rounded-2xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-electric-300">Soal #1: Menghitung Gaya</h3>
+                        <span class="bg-gradient-to-r from-green-600 to-green-800 text-xs px-3 py-1 rounded-full">Pemula</span>
+                    </div>
+                    <div class="flex items-start mt-4 mb-4">
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div class="mr-4">
+                            <div class="text-sm text-gray-400">Muatan 1: 5 μC</div>
+                        </div>
+                        <div class="mr-4">
+                            <div class="w-1 h-8 bg-electric-500"></div>
+                        </div>
+                        <div class="charge-visual charge-negative mr-4">-</div>
+                        <div>
+                            <div class="text-sm text-gray-400">Muatan 2: 3 μC</div>
+                        </div>
+                    </div>
+                    <p class="mb-4">Dua muatan: q₁ = 5μC, q₂ = 3μC dipisahkan oleh jarak 10 cm di udara. Hitung gaya elektrostatis di antara keduanya.</p>
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">Jarak: 0.1 m</div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-400 mr-2">Coba hitung:</span>
+                            <button class="problem-btn text-sm bg-gradient-to-r from-electric-700 to-electric-800 hover:from-electric-600 hover:to-electric-700 py-2 px-4 rounded-xl flex items-center">
+                                <i class="fas fa-calculator mr-2"></i> Hitung
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="problem-card p-6 rounded-2xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-electric-300">Soal #2: Menghitung Jarak</h3>
+                        <span class="bg-gradient-to-r from-yellow-600 to-yellow-800 text-xs px-3 py-1 rounded-full">Menengah</span>
+                    </div>
+                    <div class="flex items-start mt-4 mb-4">
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div class="mr-4">
+                            <div class="text-sm text-gray-400">Muatan 1: 8 μC</div>
+                        </div>
+                        <div class="mr-4">
+                            <div class="w-1 h-8 bg-electric-500"></div>
+                        </div>
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div>
+                            <div class="text-sm text-gray-400">Muatan 2: 6 μC</div>
+                        </div>
+                    </div>
+                    <p class="mb-4">Dua muatan: q₁ = 8μC, q₂ = 6μC memberikan gaya tolak sebesar 1.2N satu sama lain di udara. Berapa jarak antara keduanya?</p>
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">Gaya: 1.2 N</div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-400 mr-2">Coba hitung:</span>
+                            <button class="problem-btn text-sm bg-gradient-to-r from-electric-700 to-electric-800 hover:from-electric-600 hover:to-electric-700 py-2 px-4 rounded-xl flex items-center">
+                                <i class="fas fa-calculator mr-2"></i> Hitung
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="problem-card p-6 rounded-2xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-electric-300">Soal #3: Menghitung Muatan</h3>
+                        <span class="bg-gradient-to-r from-yellow-600 to-yellow-800 text-xs px-3 py-1 rounded-full">Menengah</span>
+                    </div>
+                    <div class="flex items-start mt-4 mb-4">
+                        <div class="charge-visual charge-negative mr-4">-</div>
+                        <div class="mr-4">
+                            <div class="text-sm text-gray-400">Muatan: ?</div>
+                        </div>
+                        <div class="mr-4">
+                            <div class="w-1 h-8 bg-electric-500"></div>
+                        </div>
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div>
+                            <div class="text-sm text-gray-400">Muatan: 7 μC</div>
+                        </div>
+                    </div>
+                    <p class="mb-4">Muatan q₁ = 7μC mengalami gaya tarik 0.85N ketika ditempatkan 15cm dari muatan kedua q₂. Berapa besar q₂?</p>
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">Jarak: 0.15 m | Gaya: 0.85 N</div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-400 mr-2">Coba hitung:</span>
+                            <button class="problem-btn text-sm bg-gradient-to-r from-electric-700 to-electric-800 hover:from-electric-600 hover:to-electric-700 py-2 px-4 rounded-xl flex items-center">
+                                <i class="fas fa-calculator mr-2"></i> Hitung
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="problem-card p-6 rounded-2xl">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold text-electric-300">Soal #4: Efek Medium</h3>
+                        <span class="bg-gradient-to-r from-red-600 to-red-800 text-xs px-3 py-1 rounded-full">Lanjutan</span>
+                    </div>
+                    <div class="flex items-start mt-4 mb-4">
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div class="mr-4">
+                            <div class="text-sm text-gray-400">Muatan: 5 μC</div>
+                        </div>
+                        <div class="mr-4">
+                            <div class="w-1 h-8 bg-electric-500"></div>
+                        </div>
+                        <div class="charge-visual charge-positive mr-4">+</div>
+                        <div>
+                            <div class="text-sm text-gray-400">Muatan: 5 μC</div>
+                        </div>
+                    </div>
+                    <p class="mb-4">Dua muatan +5μC masing-masing ditempatkan terpisah 10cm. Bandingkan gaya elektrostatis ketika berada di udara vs air.</p>
+                    <div class="flex justify-between items-center mt-6">
+                        <div class="text-sm text-gray-400">Jarak: 0.1 m | k bervariasi</div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-400 mr-2">Coba hitung:</span>
+                            <button class="problem-btn text-sm bg-gradient-to-r from-electric-700 to-electric-800 hover:from-electric-600 hover:to-electric-700 py-2 px-4 rounded-xl flex items-center">
+                                <i class="fas fa-calculator mr-2"></i> Hitung
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 mt-12 bg-dark-900 text-gray-400 py-8 border-t border-dark-700">
+        <div class="container mx-auto px-4">
+            <div class="text-center">
+                <p>Kalkulator Hukum Coulomb © 2025 | Alat Pendidikan Fisika</p>
+                <p class="mt-2 text-sm">Dibuat oleh: ZAIDAN ZAKI MAKSUDI, M IZZA ANURA HAFIDZ, FRANSISKUS XAVERIUS KEVIN SUSANTO, MUHAMMAD RAFLIYANTO NUGROHO</p>
+                <div class="mt-4 flex justify-center space-x-6">
+                    <a href="#" class="hover:text-electric-300"><i class="fab fa-github fa-lg"></i></a>
+                    <a href="#" class="hover:text-electric-300"><i class="fab fa-twitter fa-lg"></i></a>
+                    <a href="#" class="hover:text-electric-300"><i class="fab fa-linkedin fa-lg"></i></a>
+                    <a href="#" class="hover:text-electric-300"><i class="fab fa-youtube fa-lg"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Create background particles
+        function createParticles() {
+            const container = document.getElementById('particles-container');
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Random size and position
+                const size = Math.random() * 150 + 50;
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const delay = Math.random() * 5;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${posX}%`;
+                particle.style.top = `${posY}%`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        // Selected k value (default vacuum)
+        let selectedK = 8.987551787e9;
+        let currentMode = 'force';
+        
+        // DOM Elements
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const calculateBtn = document.getElementById('calculate-btn');
+        const calculationContainer = document.getElementById('calculation-container');
+        const calculationSteps = document.getElementById('calculation-steps');
+        const constantSelect = document.getElementById('constant-select');
+        const customKContainer = document.getElementById('custom-k-container');
+        const customKValue = document.getElementById('custom-k-value');
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            createParticles();
+            document.getElementById('mode-force').click();
+            
+            // Set initial visualization
+            updateVisualization();
+            
+            // Constant selection handler
+            constantSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customKContainer.classList.remove('hidden');
+                    selectedK = parseFloat(customKValue.value) || 9e9;
+                } else {
+                    customKContainer.classList.add('hidden');
+                    selectedK = parseFloat(this.value);
+                }
+            });
+            
+            // Custom k value handler
+            customKValue.addEventListener('input', function() {
+                selectedK = parseFloat(this.value) || 9e9;
+            });
+            
+            // Sample problem buttons
+            document.querySelectorAll('.problem-btn').forEach((btn, index) => {
+                btn.addEventListener('click', () => {
+                    loadSampleProblem(index);
+                });
+            });
+            
+            // Update visualization when inputs change
+            document.querySelectorAll('#charge1-value, #charge2-value, #distance-value').forEach(input => {
+                input.addEventListener('input', updateVisualization);
+            });
+        });
+        
+        // Update force visualization
+        function updateVisualization() {
+            const q1Value = parseFloat(document.getElementById('charge1-value').value) || 0;
+            const q2Value = parseFloat(document.getElementById('charge2-value').value) || 0;
+            const distanceValue = parseFloat(document.getElementById('distance-value').value) || 0.1;
+            
+            // Update charge visuals
+            const charge1Visual = document.getElementById('charge1-visual');
+            const charge2Visual = document.getElementById('charge2-visual');
+            const forceContainer = document.getElementById('force-container');
+            
+            if (q1Value > 0) {
+                charge1Visual.className = 'charge-visual charge-positive';
+                charge1Visual.textContent = '+';
+            } else if (q1Value < 0) {
+                charge1Visual.className = 'charge-visual charge-negative';
+                charge1Visual.textContent = '-';
+            } else {
+                charge1Visual.className = 'charge-visual bg-gray-600';
+                charge1Visual.textContent = '0';
+            }
+            
+            if (q2Value > 0) {
+                charge2Visual.className = 'charge-visual charge-positive';
+                charge2Visual.textContent = '+';
+            } else if (q2Value < 0) {
+                charge2Visual.className = 'charge-visual charge-negative';
+                charge2Visual.textContent = '-';
+            } else {
+                charge2Visual.className = 'charge-visual bg-gray-600';
+                charge2Visual.textContent = '0';
+            }
+            
+            // Update force direction based on charges
+            let forceDirection = 'attractive';
+            if (q1Value * q2Value > 0 && q1Value !== 0 && q2Value !== 0) {
+                forceDirection = 'repulsive';
+            } else if (q1Value === 0 || q2Value === 0) {
+                forceDirection = 'neutral';
+            }
+            
+            // Update force container class
+            forceContainer.className = `flex items-center w-full my-2 force-${forceDirection}`;
+            
+            // Update distance label
+            document.getElementById('distance-value-visual').textContent = `Jarak: ${distanceValue.toFixed(2)} m`;
+            
+            // If we're in force mode, update force value too
+            if (currentMode === 'force') {
+                const q1Unit = document.getElementById('charge1-unit').value;
+                const q2Unit = document.getElementById('charge2-unit').value;
+                
+                // Convert inputs to base units
+                let q1 = q1Value;
+                let q2 = q2Value;
+                
+                if (q1Unit === 'μC') q1 *= 1e-6;
+                else if (q1Unit === 'nC') q1 *= 1e-9;
+                else if (q1Unit === 'pC') q1 *= 1e-12;
+                
+                if (q2Unit === 'μC') q2 *= 1e-6;
+                else if (q2Unit === 'nC') q2 *= 1e-9;
+                else if (q2Unit === 'pC') q2 *= 1e-12;
+                
+                const r = distanceValue;
+                const F = (selectedK * Math.abs(q1 * q2)) / (r * r);
+                
+                document.getElementById('force-value-visual').textContent = `Gaya: ${formatSciNotation(F)} N`;
+            }
+        }
+        
+        // Mode change handler
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Remove active class from all buttons
+                modeButtons.forEach(b => {
+                    b.classList.remove('bg-gradient-to-r', 'from-electric-800', 'to-electric-900', 'text-white');
+                    b.classList.add('bg-dark-800', 'text-gray-300');
+                });
+                
+                // Add active class to clicked button
+                btn.classList.add('bg-gradient-to-r', 'from-electric-800', 'to-electric-900', 'text-white');
+                btn.classList.remove('bg-dark-800', 'text-gray-300');
+                
+                // Update current mode
+                currentMode = btn.id.replace('mode-', '');
+                
+                // Update UI based on mode
+                document.getElementById('force-input').classList.toggle('hidden', currentMode === 'force');
+                document.getElementById('charge1-group').classList.toggle('hidden', currentMode === 'charge1');
+                document.getElementById('charge2-group').classList.toggle('hidden', currentMode === 'charge2');
+                document.getElementById('distance-group').classList.toggle('hidden', currentMode === 'distance');
+                
+                // Update button text
+                let btnText = "Hitung ";
+                switch(currentMode) {
+                    case 'force': 
+                        btnText += "Gaya";
+                        break;
+                    case 'charge1': 
+                        btnText += "Muatan 1";
+                        break;
+                    case 'charge2': 
+                        btnText += "Muatan 2";
+                        break;
+                    case 'distance': 
+                        btnText += "Jarak";
+                        break;
+                }
+                document.getElementById('calculate-btn').innerHTML = `<i class="fas fa-bolt mr-3"></i>${btnText}`;
+                
+                // Add subtle animation to mode buttons
+                btn.classList.add('charge-pulse');
+                setTimeout(() => btn.classList.remove('charge-pulse'), 400);
+            });
+        });
+        
+        // Function to format numbers in scientific notation
+        function formatSciNotation(value) {
+            if (value === 0) return '0';
+            if (Math.abs(value) >= 0.001 && Math.abs(value) < 1000) {
+                // Format angka biasa
+                return value.toFixed(6).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+            }
+            
+            // Format notasi ilmiah
+            const exponent = Math.floor(Math.log10(Math.abs(value)));
+            const coeff = value / Math.pow(10, exponent);
+            const coeffStr = coeff.toFixed(4).replace(/(\.\d*?)0+$/, '$1').replace(/\.$/, '');
+            
+            return `${coeffStr} × 10<sup>${exponent}</sup>`;
+        }
+
+        
+        // Load sample problem
+        function loadSampleProblem(index) {
+            switch(index) {
+                case 0:
+                    // Problem 1
+                    document.getElementById('charge1-value').value = 5;
+                    document.getElementById('charge1-unit').value = 'μC';
+                    document.getElementById('charge2-value').value = -3;
+                    document.getElementById('charge2-unit').value = 'μC';
+                    document.getElementById('distance-value').value = 0.1;
+                    document.getElementById('constant-select').value = '9000000000';
+                    document.getElementById('mode-force').click();
+                    break;
+                case 1:
+                    // Problem 2
+                    document.getElementById('charge1-value').value = 8;
+                    document.getElementById('charge1-unit').value = 'μC';
+                    document.getElementById('charge2-value').value = 6;
+                    document.getElementById('charge2-unit').value = 'μC';
+                    document.getElementById('force-value').value = 1.2;
+                    document.getElementById('constant-select').value = '9000000000';
+                    document.getElementById('mode-distance').click();
+                    break;
+                case 2:
+                    // Problem 3
+                    document.getElementById('charge1-value').value = 7;
+                    document.getElementById('charge1-unit').value = 'μC';
+                    document.getElementById('force-value').value = 0.85;
+                    document.getElementById('distance-value').value = 0.15;
+                    document.getElementById('constant-select').value = '8987551787';
+                    document.getElementById('mode-charge2').click();
+                    break;
+                case 3:
+                    // Problem 4
+                    document.getElementById('charge1-value').value = 5;
+                    document.getElementById('charge1-unit').value = 'μC';
+                    document.getElementById('charge2-value').value = 5;
+                    document.getElementById('charge2-unit').value = 'μC';
+                    document.getElementById('distance-value').value = 0.1;
+                    document.getElementById('constant-select').value = '9000000000';
+                    document.getElementById('mode-force').click();
+                    break;
+            }
+            
+            // Update visualization
+            updateVisualization();
+            
+            // Scroll to calculator
+            document.getElementById('calculator').scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto calculate after delay
+            setTimeout(() => {
+                performCalculation();
+                document.getElementById('calculation-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
+        
+        // Main calculation function
+        async function performCalculation() {
+            // Get input values
+            const inputs = {
+                q1_value: parseFloat(document.getElementById('charge1-value').value) || 0,
+                q1_unit: document.getElementById('charge1-unit').value,
+                q2_value: parseFloat(document.getElementById('charge2-value').value) || 0,
+                q2_unit: document.getElementById('charge2-unit').value,
+                distance_value: parseFloat(document.getElementById('distance-value').value) || 0,
+                force_value: parseFloat(document.getElementById('force-value').value) || 0,
+                constant_value: document.querySelector('#custom-k-container').classList.contains('hidden') ? 
+                    document.getElementById('constant-select').value : 
+                    document.getElementById('custom-k-value').value
+            };
+
+            // Send request to backend
+            try {
+                const response = await fetch('/calculate', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        mode: currentMode,
+                        inputs: inputs
+                    })
+                });
+
+                const result = await response.json();
+                displayResult(result);
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan dalam perhitungan');
+            }
+        }
+        
+        function displayResult(result) {
+            // Show calculation container
+            document.getElementById('calculation-container').classList.remove('hidden');
+            
+            // Display result
+            const stepsContainer = document.getElementById('calculation-steps');
+            stepsContainer.innerHTML = '';
+            
+            // Add formula step
+            stepsContainer.innerHTML += `
+                <div class="calculation-step p-5 rounded-xl">
+                    <p class="text-electric-300 mb-3">Rumus:</p>
+                    <p class="font-bold text-xl">${result.formula}</p>
+                </div>
+            `;
+            
+            // Add calculation steps
+            result.steps.forEach(step => {
+                stepsContainer.innerHTML += `
+                    <div class="calculation-step p-5 rounded-xl">
+                        <p class="text-lg">${step}</p>
+                    </div>
+                `;
+            });
+            
+            // Add final result
+            const target = currentMode === 'force' ? 'F' : 
+                  currentMode === 'distance' ? 'r' : 
+                  currentMode === 'charge1' ? 'q₁' : 'q₂';
+    
+            // Gunakan formatted_value dari backend
+            const formattedValue = result.formatted_value || formatSciNotation(result.value);
+            
+            stepsContainer.innerHTML += `
+                <div class="calculation-step p-5 bg-gradient-to-br from-electric-900 to-electric-800 rounded-xl border border-electric-600 mt-4 result-appear">
+                    <p class="text-electric-200 mb-3 text-xl">Hasil Perhitungan:</p>
+                    <p class="text-2xl font-bold text-white">
+                        ${target} = 
+                        <span id="result-value" class="highlight">${formattedValue}</span> ${result.unit}
+                    </p>
+                    ${result.unit === 'C' ? `<p class="mt-3">≈ ${(result.value / 1e-6).toFixed(8)} μC (mikrocoulomb)</p>` : ''}
+                </div>
+            `;
+            
+            // Update visualization
+            if (currentMode === 'force') {
+                document.getElementById('force-value-visual').textContent = 
+                    `Gaya: ${formatSciNotation(result.value)} N`;
+            }
+            
+            // Animate the result
+            setTimeout(() => {
+                const resultEl = document.getElementById('result-value');
+                if (resultEl) {
+                    resultEl.classList.remove('highlight');
+                    setTimeout(() => resultEl.classList.add('highlight'), 10);
+                }
+            }, 100);
+        }
+        
+        // Set up event listeners
+        calculateBtn.addEventListener('click', performCalculation);
+        
+        // Initialize UI
+        document.getElementById('mode-force').click();
+    </script>
+</body>
+</html>
